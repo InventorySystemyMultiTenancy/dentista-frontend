@@ -1,11 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { api, ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/Button";
 import { Field, Input, Select } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
+import { CHART_CATEGORICAL, CHART_INK } from "@/lib/chart-colors";
 import { formatCurrency } from "@/lib/format";
 import type { InventoryItem } from "@/lib/types";
 
@@ -31,7 +42,36 @@ export default function EstoquePage() {
         <Button onClick={() => setModalOpen(true)}>Novo item</Button>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      {items.length > 0 && (
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900">Quantidade x mínimo por item</h2>
+          <ResponsiveContainer width="100%" height={Math.max(200, items.length * 40)}>
+            <BarChart
+              data={items}
+              layout="vertical"
+              margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
+              barCategoryGap={12}
+            >
+              <CartesianGrid horizontal={false} stroke={CHART_INK.grid} />
+              <XAxis type="number" allowDecimals={false} stroke={CHART_INK.muted} fontSize={12} />
+              <YAxis
+                type="category"
+                dataKey="name"
+                stroke={CHART_INK.muted}
+                fontSize={12}
+                width={140}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip contentStyle={{ borderRadius: 8, borderColor: CHART_INK.axis, fontSize: 13 }} />
+              <Legend />
+              <Bar dataKey="quantity" name="Quantidade atual" fill={CHART_CATEGORICAL[0]} radius={[0, 4, 4, 0]} />
+              <Bar dataKey="minQuantity" name="Mínimo" fill={CHART_CATEGORICAL[1]} radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase text-zinc-500">
             <tr>

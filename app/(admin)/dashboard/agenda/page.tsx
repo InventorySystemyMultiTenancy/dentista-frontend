@@ -112,7 +112,7 @@ export default function AgendaPage() {
         </Field>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
         {loading ? (
           <p className="px-4 py-6 text-center text-sm text-zinc-400">Carregando agenda...</p>
         ) : timeline.length === 0 ? (
@@ -122,16 +122,19 @@ export default function AgendaPage() {
         ) : (
           <ul className="divide-y divide-zinc-100">
             {timeline.map(({ time, appointment }) => (
-              <li key={time} className="flex items-center justify-between gap-3 px-4 py-3 text-sm">
-                <span className="w-14 font-medium text-zinc-700">{time}</span>
+              <li
+                key={time}
+                className="flex flex-col gap-2 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+              >
+                <span className="font-medium text-zinc-700 sm:w-14">{time}</span>
                 {appointment ? (
                   <>
-                    <span className="flex-1 text-zinc-700">
+                    <span className="text-zinc-700 sm:flex-1">
                       {appointment.patient.name}
                       {appointment.notes ? ` — ${appointment.notes}` : ""}
                     </span>
                     <StatusBadge status={appointment.status} />
-                    <div className="flex gap-1">
+                    <div className="flex flex-wrap gap-1">
                       <a
                         href={whatsappReminderUrl(appointment.patient.phone, appointment.patient.name, date, time)}
                         target="_blank"
@@ -153,7 +156,7 @@ export default function AgendaPage() {
                   </>
                 ) : (
                   <>
-                    <span className="flex-1 text-zinc-400">Livre</span>
+                    <span className="text-zinc-400 sm:flex-1">Livre</span>
                     <Button variant="secondary" onClick={() => setScheduleSlot(time)}>
                       Agendar
                     </Button>

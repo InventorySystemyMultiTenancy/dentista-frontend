@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { api, ApiError } from "@/lib/api";
 import type { Patient } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import { Field, Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
+import { CHART_CATEGORICAL, CHART_INK } from "@/lib/chart-colors";
 import { formatDate } from "@/lib/format";
 
 function whatsappInviteUrl(phone: string, inviteLink: string) {
@@ -52,6 +54,18 @@ export default function PacientesPage() {
     }
   }
 
+  const newPatientsByMonth = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of patients) {
+      const month = p.createdAt.slice(0, 7);
+      counts.set(month, (counts.get(month) ?? 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-12)
+      .map(([month, count]) => ({ month, count }));
+  }, [patients]);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -77,7 +91,22 @@ export default function PacientesPage() {
         </Button>
       </form>
 
-      <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      {newPatientsByMonth.length > 1 && (
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+          <h2 className="mb-3 text-sm font-semibold text-zinc-900">Novos pacientes por mês</h2>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={newPatientsByMonth} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke={CHART_INK.grid} />
+              <XAxis dataKey="month" stroke={CHART_INK.muted} fontSize={12} />
+              <YAxis allowDecimals={false} stroke={CHART_INK.muted} fontSize={12} width={28} />
+              <Tooltip contentStyle={{ borderRadius: 8, borderColor: CHART_INK.axis, fontSize: 13 }} />
+              <Bar dataKey="count" name="Novos pacientes" fill={CHART_CATEGORICAL[0]} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase text-zinc-500">
             <tr>
