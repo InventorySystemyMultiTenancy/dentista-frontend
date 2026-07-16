@@ -87,7 +87,7 @@ function FuncionariosContent() {
               </tr>
             )}
             {staff.map((s) => (
-              <tr key={s.id} className="hover:bg-zinc-50">
+              <tr key={s.id} className="transition-colors hover:bg-zinc-50">
                 <td className="px-4 py-3 font-medium text-zinc-800">{s.name}</td>
                 <td className="px-4 py-3 text-zinc-600">{s.position ?? "—"}</td>
                 <td className="px-4 py-3 text-zinc-600">{s.email}</td>

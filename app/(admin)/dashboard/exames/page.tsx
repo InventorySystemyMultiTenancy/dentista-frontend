@@ -132,7 +132,7 @@ export default function ExamesPage() {
               </tr>
             )}
             {exams.map((exam) => (
-              <tr key={exam.id} className="hover:bg-zinc-50">
+              <tr key={exam.id} className="transition-colors hover:bg-zinc-50">
                 <td className="px-4 py-3 text-zinc-700">{exam.patient?.name}</td>
                 <td className="px-4 py-3 text-zinc-700">{exam.type}</td>
                 <td className="px-4 py-3 text-zinc-600">{formatDate(exam.date)}</td>

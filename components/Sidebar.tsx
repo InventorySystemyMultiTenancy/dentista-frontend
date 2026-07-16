@@ -45,7 +45,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`rounded-md px-3 py-2 text-sm font-medium ${
+              className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ${
                 active ? "bg-teal-50 text-teal-700" : "text-zinc-600 hover:bg-zinc-100"
               }`}
             >
@@ -57,7 +57,7 @@ export function Sidebar() {
       <div className="border-t border-zinc-200 p-3">
         <button
           onClick={handleLogout}
-          className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-zinc-600 hover:bg-zinc-100"
+          className="w-full rounded-md px-3 py-2 text-left text-sm font-medium text-zinc-600 transition-colors duration-150 hover:bg-zinc-100"
         >
           Sair
         </button>

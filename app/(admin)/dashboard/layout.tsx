@@ -6,7 +6,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <RequireRole roles={["ADMIN", "EMPLOYEE"]}>
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="relative flex-1 overflow-y-auto">
+          <div
+            className="fixed inset-0 -z-10 scale-105 bg-cover bg-center blur-[2px]"
+            style={{ backgroundImage: "url(/dentist-patient.jpg)" }}
+          />
+          <div className="fixed inset-0 -z-10 bg-gradient-to-b from-white/55 via-white/40 to-white/55" />
+          <div className="relative p-6">{children}</div>
+        </main>
       </div>
     </RequireRole>
   );

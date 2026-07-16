@@ -63,6 +63,16 @@ export interface Appointment {
   staff: { id: string; name: string };
 }
 
+export type AppointmentRequestStatus = "PENDING" | "CONTACTED" | "DONE";
+
+export interface AppointmentRequest {
+  id: string;
+  patientId: string;
+  status: AppointmentRequestStatus;
+  createdAt: string;
+  patient: { id: string; name: string; phone: string };
+}
+
 export interface Exam {
   id: string;
   patientId: string;

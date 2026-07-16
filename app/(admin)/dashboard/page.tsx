@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { StatCard } from "@/components/ui/StatCard";
-import { formatCurrency } from "@/lib/format";
-import type { Appointment, InventoryItem, Patient } from "@/lib/types";
+import { Button } from "@/components/ui/Button";
+import { formatCurrency, formatDateTime } from "@/lib/format";
+import type { Appointment, AppointmentRequest, InventoryItem, Patient } from "@/lib/types";
 
 interface FinancialSummary {
   pendingTotal: number;
@@ -18,6 +19,14 @@ export default function DashboardOverviewPage() {
   const [todayAppointments, setTodayAppointments] = useState<Appointment[] | null>(null);
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
   const [lowStock, setLowStock] = useState<InventoryItem[] | null>(null);
+  const [appointmentRequests, setAppointmentRequests] = useState<AppointmentRequest[] | null>(null);
+
+  function loadAppointmentRequests() {
+    api
+      .get<AppointmentRequest[]>("/appointment-requests?status=PENDING")
+      .then(setAppointmentRequests)
+      .catch(() => setAppointmentRequests(null));
+  }
 
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
@@ -41,11 +50,42 @@ export default function DashboardOverviewPage() {
       .get<InventoryItem[]>("/inventory/low-stock")
       .then(setLowStock)
       .catch(() => setLowStock(null));
+
+    loadAppointmentRequests();
   }, []);
+
+  async function handleMarkContacted(id: string) {
+    try {
+      await api.patch(`/appointment-requests/${id}/status`, { status: "CONTACTED" });
+      loadAppointmentRequests();
+    } catch (err) {
+      alert(err instanceof ApiError ? err.message : "Não foi possível atualizar a solicitação");
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold text-zinc-900">Visão geral</h1>
+
+      {appointmentRequests && appointmentRequests.length > 0 && (
+        <div className="rounded-lg border border-teal-200 bg-teal-50 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-teal-900">
+            {appointmentRequests.length} solicitação(ões) de agendamento pelo portal
+          </h2>
+          <ul className="divide-y divide-teal-100">
+            {appointmentRequests.map((r) => (
+              <li key={r.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <span className="text-teal-900">
+                  {r.patient.name} — {r.patient.phone} · {formatDateTime(r.createdAt)}
+                </span>
+                <Button variant="secondary" onClick={() => handleMarkContacted(r.id)}>
+                  Marcar como contatado
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {patientsCount !== null && <StatCard label="Pacientes cadastrados" value={String(patientsCount)} />}

@@ -144,7 +144,7 @@ export default function FinanceiroPage() {
               </tr>
             )}
             {entries.map((entry) => (
-              <tr key={entry.id} className="hover:bg-zinc-50">
+              <tr key={entry.id} className="transition-colors hover:bg-zinc-50">
                 <td className="px-4 py-3 text-zinc-700">{entry.description}</td>
                 <td className="px-4 py-3 text-zinc-600">{entry.category}</td>
                 <td className="px-4 py-3 text-zinc-600">

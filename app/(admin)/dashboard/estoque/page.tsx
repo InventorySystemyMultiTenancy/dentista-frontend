@@ -55,7 +55,7 @@ export default function EstoquePage() {
             {items.map((item) => {
               const low = item.quantity <= item.minQuantity;
               return (
-                <tr key={item.id} className="hover:bg-zinc-50">
+                <tr key={item.id} className="transition-colors hover:bg-zinc-50">
                   <td className="px-4 py-3 font-medium text-zinc-800">{item.name}</td>
                   <td className="px-4 py-3 text-zinc-600">{item.category}</td>
                   <td className="px-4 py-3 text-zinc-700">

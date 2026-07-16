@@ -104,7 +104,7 @@ export default function PacientesPage() {
               </tr>
             )}
             {patients.map((p) => (
-              <tr key={p.id} className="hover:bg-zinc-50">
+              <tr key={p.id} className="transition-colors hover:bg-zinc-50">
                 <td className="px-4 py-3">
                   <Link href={`/dashboard/pacientes/${p.id}`} className="font-medium text-teal-700 hover:underline">
                     {p.name}

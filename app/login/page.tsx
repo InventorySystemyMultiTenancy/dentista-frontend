@@ -35,10 +35,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4">
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url(/dentist-patient.jpg)" }}
+      />
+      <div className="absolute inset-0 bg-zinc-900/60" />
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm"
+        className="relative z-10 w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm"
       >
         <h1 className="mb-1 text-xl font-semibold text-zinc-900">
           {process.env.NEXT_PUBLIC_CLINIC_NAME ?? "Clínica Odontológica"}
