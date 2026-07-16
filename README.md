@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dentista — Frontend
 
-## Getting Started
+Painel administrativo e portal do paciente da clínica odontológica. Next.js (App Router) +
+TypeScript + Tailwind CSS. Consome a API do [backend](../backend).
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js 16 (App Router)
+- TypeScript + Tailwind CSS v4
+- recharts (gráficos)
+- Autenticação via cookie httpOnly setado pelo backend (domínio separado em produção)
+
+## Rodando localmente
+
+1. Suba o backend primeiro (veja `../backend/README.md`), rodando em `http://localhost:3001`.
+2. Copie `.env.example` para `.env.local` e ajuste `NEXT_PUBLIC_API_URL` se necessário.
+3. Instale as dependências e rode o servidor de desenvolvimento:
+   ```
+   npm install
+   npm run dev
+   ```
+4. Acesse `http://localhost:3000`. A rota `/` redireciona para `/login`.
+
+## Estrutura
+
+```
+app/
+  login/page.tsx              # login único (admin/funcionário/paciente)
+  ativar-conta/page.tsx        # paciente define senha a partir do link de convite
+  (admin)/dashboard/           # painel administrativo (protegido por RequireRole)
+    page.tsx                   # visão geral
+    pacientes/                 # lista + detalhe (agendamentos, exames)
+    agenda/                    # agenda do dia por profissional + aviso via WhatsApp
+    exames/                    # gráficos de resultados/estados dos pacientes
+    financeiro/                # contas a pagar/receber + resumo
+    estoque/                   # itens e movimentações de estoque
+    funcionarios/              # cadastro de funcionários + permissões (admin only)
+  (patient)/portal/            # área do paciente (protegida por RequireRole)
+    page.tsx, agendamentos/, exames/
+lib/
+  api.ts                      # wrapper fetch (credentials: include)
+  auth-context.tsx            # sessão do usuário (checada via GET /auth/me)
+  types.ts, format.ts, chart-colors.ts
+components/
+  ui/                         # Button, Input, Modal, Badge, StatCard
+  Sidebar.tsx, PortalHeader.tsx, RequireRole.tsx
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Autenticação entre domínios diferentes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+O cookie de sessão é definido pelo **backend** (domínio `onrender.com` em produção), não pelo
+frontend (`vercel.app`). Por isso a proteção de rotas não usa `proxy.ts` do Next (que não teria
+acesso a esse cookie) — cada área protegida usa o componente `RequireRole`, que consulta
+`GET /auth/me` no cliente (o navegador envia o cookie automaticamente para o domínio do backend)
+e redireciona conforme o papel do usuário.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Portal do paciente — fundo com vídeo (pendente)
 
-## Learn More
+O layout em `app/(patient)/portal/layout.tsx` tem um `TODO` marcando onde entrará o fundo com
+vídeo em "scroll-scrubbing" (o vídeo avança conforme o scroll da página). Essa parte será
+implementada depois, com instruções específicas do cliente.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy na Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Importe o repositório `dentista-frontend` na Vercel.
+2. Configure a variável de ambiente `NEXT_PUBLIC_API_URL` apontando para a URL da API no Render
+   (ex.: `https://dentista-backend.onrender.com/api`).
+3. Deploy automático a cada push na branch principal.
