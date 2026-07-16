@@ -2,19 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { formatDate } from "@/lib/format";
 import type { Appointment, Exam } from "@/lib/types";
-import type { HeroSlide } from "@/components/ScrollVideoHero";
-
-// ScrollVideoHero mexe em window/document (GSAP) e escolhe o vídeo pela
-// largura da tela — só pode existir no cliente.
-const ScrollVideoHero = dynamic(
-  () => import("@/components/ScrollVideoHero").then((m) => m.ScrollVideoHero),
-  { ssr: false },
-);
+import { ScrollVideoHero, type HeroSlide } from "@/components/ScrollVideoHero";
 
 const CLINIC_NAME = process.env.NEXT_PUBLIC_CLINIC_NAME ?? "Clínica Odontológica";
 // Número do WhatsApp do responsável pela clínica para onde vai a solicitação de consulta.
@@ -53,6 +45,7 @@ export default function PortalHomePage() {
     () => [
       {
         id: "welcome",
+        label: "Boas-vindas",
         start: 0,
         end: 0.1,
         content: (
@@ -69,6 +62,7 @@ export default function PortalHomePage() {
       },
       {
         id: "experience",
+        label: "Nossa história",
         start: 0.1,
         end: 0.28,
         content: (
@@ -85,6 +79,7 @@ export default function PortalHomePage() {
       },
       {
         id: "dedication",
+        label: "Nosso cuidado",
         start: 0.28,
         end: 0.46,
         content: (
@@ -101,6 +96,7 @@ export default function PortalHomePage() {
       },
       {
         id: "verified",
+        label: "Confiança e verificação",
         start: 0.46,
         end: 0.64,
         content: (
@@ -117,6 +113,7 @@ export default function PortalHomePage() {
       },
       {
         id: "certified",
+        label: "Qualidade e certificações",
         start: 0.64,
         end: 0.82,
         content: (
@@ -133,6 +130,7 @@ export default function PortalHomePage() {
       },
       {
         id: "navigate",
+        label: "Navegação e agendamento",
         start: 0.82,
         end: 1,
         content: (
@@ -178,6 +176,10 @@ export default function PortalHomePage() {
 
   return (
     <div className="flex flex-col">
+      {/* Maior asset acima da dobra — prioriza o download antes de outros recursos da página. */}
+      <link rel="preload" as="video" href="/video-horizontal.mp4" media="(min-width: 768px)" />
+      <link rel="preload" as="video" href="/video-vertical.mp4" media="(max-width: 767px)" />
+
       <ScrollVideoHero slides={slides} />
 
       <div className="flex flex-col gap-6 p-6">
