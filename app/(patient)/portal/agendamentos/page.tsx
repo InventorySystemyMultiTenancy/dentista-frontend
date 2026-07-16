@@ -21,7 +21,7 @@ export default function PortalAgendamentosPage() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-6">
       <h1 className="text-2xl font-semibold text-zinc-900">Meus agendamentos</h1>
 
       <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
