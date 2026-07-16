@@ -8,7 +8,7 @@ const MOBILE_BREAKPOINT = 768;
 
 // Distância (em fração de 0-1 do progresso do scroll) usada para o crossfade
 // entre um slide e o próximo — maior = transição mais gradual.
-const FADE_MARGIN = 0.04;
+const FADE_MARGIN = 0.05;
 
 export interface HeroSlide {
   id: string;
@@ -19,11 +19,23 @@ export interface HeroSlide {
   content: React.ReactNode;
 }
 
-function slideOpacity(progress: number, start: number, end: number) {
-  if (progress < start - FADE_MARGIN) return 0;
-  if (progress < start) return (progress - (start - FADE_MARGIN)) / FADE_MARGIN;
-  if (progress <= end) return 1;
-  if (progress <= end + FADE_MARGIN) return 1 - (progress - end) / FADE_MARGIN;
+// Crossfade centrado exatamente no ponto de fronteira entre dois slides (start
+// de um == end do outro): enquanto um sobe de 0→1, o vizinho desce de 1→0 na
+// MESMA janela, então a soma das opacidades é sempre 1 — nunca os dois em
+// opacidade alta ao mesmo tempo. O primeiro slide não tem fade-in (já entra
+// em 1) e o último não tem fade-out (permanece em 1 até o fim do scroll).
+function slideOpacity(progress: number, slide: HeroSlide, isFirst: boolean, isLast: boolean) {
+  const half = FADE_MARGIN / 2;
+
+  const fadeInFrom = isFirst ? -Infinity : slide.start - half;
+  const fadeInTo = isFirst ? -Infinity : slide.start + half;
+  const fadeOutFrom = isLast ? Infinity : slide.end - half;
+  const fadeOutTo = isLast ? Infinity : slide.end + half;
+
+  if (progress <= fadeInFrom) return 0;
+  if (progress < fadeInTo) return (progress - fadeInFrom) / FADE_MARGIN;
+  if (progress <= fadeOutFrom) return 1;
+  if (progress < fadeOutTo) return 1 - (progress - fadeOutFrom) / FADE_MARGIN;
   return 0;
 }
 
@@ -50,12 +62,13 @@ export function ScrollVideoHero({ slides }: { slides: HeroSlide[] }) {
   }, [slides]);
 
   function applySlideOpacities(progress: number) {
-    slidesRef.current.forEach((slide, i) => {
+    const slides = slidesRef.current;
+    slides.forEach((slide, i) => {
       const el = slideElsRef.current[i];
       if (!el) return;
-      const opacity = slideOpacity(progress, slide.start, slide.end);
+      const opacity = slideOpacity(progress, slide, i === 0, i === slides.length - 1);
       el.style.opacity = String(opacity);
-      el.style.pointerEvents = opacity > 0.05 ? "auto" : "none";
+      el.style.pointerEvents = opacity > 0.5 ? "auto" : "none";
     });
   }
 
@@ -101,7 +114,10 @@ export function ScrollVideoHero({ slides }: { slides: HeroSlide[] }) {
         trigger: wrapper,
         start: "top top",
         end: "bottom bottom",
-        scrub: true, // acompanha o scroll no mesmo frame — scrub numérico atrasa (efeito elástico)
+        // Um scrub numérico pequeno suaviza saltos de scroll (roda do mouse, trackpad
+        // "aos pulos") sem introduzir atraso perceptível — 0 seria instantâneo e mais
+        // sujeito a parecer picotado; valores bem maiores (>0.5) começam a parecer elástico.
+        scrub: 0.2,
         onUpdate: (self) => {
           pendingProgress = self.progress;
           if (durationReady && video.duration) {
