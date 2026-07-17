@@ -166,6 +166,22 @@ export function ScrollVideoHero({ slides }: { slides: HeroSlide[] }) {
       playPromise.then(() => video.pause()).catch(() => {});
     }
 
+    // Evita re-seekar pra um instante quase idêntico ao atual (menos de ~1
+    // frame a 30fps) — cada seek força o navegador a decodificar de novo, e
+    // isso some de graça em scroll rápido/contínuo, que é quando mais trava.
+    const MIN_SEEK_DELTA = 1 / 30;
+
+    function seekVideo(time: number) {
+      if (Math.abs(video!.currentTime - time) < MIN_SEEK_DELTA) return;
+      // fastSeek (Safari/WebKit) prioriza latência sobre precisão de frame —
+      // ideal pra scrubbing. Sem suporte (Chrome/Firefox), cai pro padrão.
+      if (typeof video!.fastSeek === "function") {
+        video!.fastSeek(time);
+      } else {
+        video!.currentTime = time;
+      }
+    }
+
     (async () => {
       const gsapModule = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
@@ -186,7 +202,7 @@ export function ScrollVideoHero({ slides }: { slides: HeroSlide[] }) {
         onUpdate: (self) => {
           pendingProgress = self.progress;
           if (durationReady && video.duration) {
-            video.currentTime = Math.min(self.progress * video.duration, video.duration - 0.05);
+            seekVideo(Math.min(self.progress * video.duration, video.duration - 0.05));
           }
           applySlideOpacities(self.progress);
         },

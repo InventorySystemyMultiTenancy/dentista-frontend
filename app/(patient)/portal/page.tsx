@@ -50,11 +50,11 @@ export default function PortalHomePage() {
         end: 0.1,
         content: (
           <>
-            <p className="text-sm uppercase tracking-widest text-white/70">{CLINIC_NAME}</p>
-            <h1 className="mt-3 text-4xl font-semibold text-white sm:text-5xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-teal-300">{CLINIC_NAME}</p>
+            <h1 className="mt-4 font-display text-5xl font-bold tracking-tight text-white text-balance sm:text-6xl">
               Olá, {user?.name ?? "paciente"}!
             </h1>
-            <p className="mt-3 max-w-md text-white/80">
+            <p className="mt-4 max-w-md text-lg text-white/80">
               Acompanhe seus agendamentos e resultados de exames em um só lugar.
             </p>
           </>
@@ -67,11 +67,11 @@ export default function PortalHomePage() {
         end: 0.28,
         content: (
           <>
-            <p className="text-sm uppercase tracking-widest text-white/70">Nossa história</p>
-            <h2 className="mt-3 max-w-xl text-3xl font-semibold text-white sm:text-4xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-300">Nossa história</p>
+            <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold tracking-tight text-white text-balance sm:text-5xl">
               Anos de experiência cuidando de sorrisos
             </h2>
-            <p className="mt-3 max-w-md text-white/80">
+            <p className="mt-4 max-w-md text-lg text-white/80">
               Uma trajetória dedicada a oferecer tratamentos seguros e resultados duradouros.
             </p>
           </>
@@ -84,11 +84,11 @@ export default function PortalHomePage() {
         end: 0.46,
         content: (
           <>
-            <p className="text-sm uppercase tracking-widest text-white/70">Nosso cuidado</p>
-            <h2 className="mt-3 max-w-xl text-3xl font-semibold text-white sm:text-4xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-rose-300">Nosso cuidado</p>
+            <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold tracking-tight text-white text-balance sm:text-5xl">
               Uma clínica dedicada ao seu bem-estar
             </h2>
-            <p className="mt-3 max-w-md text-white/80">
+            <p className="mt-4 max-w-md text-lg text-white/80">
               Atendimento humanizado, do primeiro contato ao acompanhamento pós-tratamento.
             </p>
           </>
@@ -101,11 +101,11 @@ export default function PortalHomePage() {
         end: 0.64,
         content: (
           <>
-            <p className="text-sm uppercase tracking-widest text-white/70">Confiança</p>
-            <h2 className="mt-3 max-w-xl text-3xl font-semibold text-white sm:text-4xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">Confiança</p>
+            <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold tracking-tight text-white text-balance sm:text-5xl">
               Verificada por órgãos nacionais de saúde
             </h2>
-            <p className="mt-3 max-w-md text-white/80">
+            <p className="mt-4 max-w-md text-lg text-white/80">
               Registro e regularidade em dia junto aos conselhos e vigilâncias sanitárias.
             </p>
           </>
@@ -118,11 +118,11 @@ export default function PortalHomePage() {
         end: 0.82,
         content: (
           <>
-            <p className="text-sm uppercase tracking-widest text-white/70">Qualidade</p>
-            <h2 className="mt-3 max-w-xl text-3xl font-semibold text-white sm:text-4xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-violet-300">Qualidade</p>
+            <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold tracking-tight text-white text-balance sm:text-5xl">
               Certificações internacionais de biossegurança
             </h2>
-            <p className="mt-3 max-w-md text-white/80">
+            <p className="mt-4 max-w-md text-lg text-white/80">
               Protocolos e equipamentos alinhados aos padrões internacionais de qualidade.
             </p>
           </>
@@ -135,8 +135,10 @@ export default function PortalHomePage() {
         end: 1,
         content: (
           <>
-            <p className="text-sm uppercase tracking-widest text-white/70">Continue por aqui</p>
-            <h2 className="mt-3 text-3xl font-semibold text-white sm:text-4xl">O que você precisa hoje?</h2>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Continue por aqui</p>
+            <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-white text-balance sm:text-5xl">
+              O que você precisa hoje?
+            </h2>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={handleRequestAppointment}

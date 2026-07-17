@@ -1,5 +1,6 @@
 import { RequireRole } from "@/components/RequireRole";
 import { PortalHeader } from "@/components/PortalHeader";
+import { PortalFooter } from "@/components/PortalFooter";
 
 // O hero com vídeo em scroll-scrubbing (ScrollVideoHero) fica só na página
 // inicial do portal (app/(patient)/portal/page.tsx), para não recarregar os
@@ -11,6 +12,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <div className="flex flex-1 flex-col bg-zinc-50">
         <PortalHeader />
         <main className="flex-1">{children}</main>
+        <PortalFooter />
       </div>
     </RequireRole>
   );
