@@ -7,7 +7,7 @@ const MOBILE_SRC = "/video-vertical.mp4";
 const MOBILE_BREAKPOINT = 768;
 const POSTER_SRC = "/dentist-patient.jpg";
 
-// Distância (em fração de 0-1 do progresso do scroll) usada para o crossfade
+// Distância (em fração de 0-1 do progresso do scroll) usada na transição
 // entre um slide e o próximo — maior = transição mais gradual.
 const FADE_MARGIN = 0.05;
 
@@ -28,23 +28,32 @@ export interface HeroSlide {
   content: React.ReactNode;
 }
 
-// Crossfade centrado exatamente no ponto de fronteira entre dois slides (start
-// de um == end do outro): enquanto um sobe de 0→1, o vizinho desce de 1→0 na
-// MESMA janela, então a soma das opacidades é sempre 1 — nunca os dois em
-// opacidade alta ao mesmo tempo. O primeiro slide não tem fade-in (já entra
-// em 1) e o último não tem fade-out (permanece em 1 até o fim do scroll).
+// Transição SEQUENCIAL, não crossfade: um slide termina de sumir por completo
+// exatamente no instante em que o próximo começa a aparecer (ambos em 0 nesse
+// ponto), em vez dos dois ficarem parcialmente visíveis ao mesmo tempo. Um
+// crossfade tradicional (opacidades somando 1) parece ótimo pra imagens, mas
+// pra texto sobreposto no mesmo lugar da tela, "os dois em 50%" ainda lê como
+// frases embaralhadas uma em cima da outra — por isso aqui não existe nenhum
+// instante com dois slides simultaneamente visíveis.
+//
+// Cada slide fica 100% visível em [start + half, end - half] (o "hold"); nos
+// últimos `half` antes do seu end ele desce a 0, e nos primeiros `half` depois
+// do seu start ele sobe de 0 — como start de um slide == end do anterior, as
+// duas janelas se encostam exatamente no ponto de troca, sem se sobrepor.
+// O primeiro slide não tem fade-in (já entra em 1) e o último não tem
+// fade-out (permanece em 1 até o fim do scroll).
 function slideOpacity(progress: number, slide: HeroSlide, isFirst: boolean, isLast: boolean) {
   const half = FADE_MARGIN / 2;
 
-  const fadeInFrom = isFirst ? -Infinity : slide.start - half;
+  const fadeInFrom = isFirst ? -Infinity : slide.start;
   const fadeInTo = isFirst ? -Infinity : slide.start + half;
   const fadeOutFrom = isLast ? Infinity : slide.end - half;
-  const fadeOutTo = isLast ? Infinity : slide.end + half;
+  const fadeOutTo = isLast ? Infinity : slide.end;
 
-  if (progress <= fadeInFrom) return 0;
-  if (progress < fadeInTo) return (progress - fadeInFrom) / FADE_MARGIN;
-  if (progress <= fadeOutFrom) return 1;
-  if (progress < fadeOutTo) return 1 - (progress - fadeOutFrom) / FADE_MARGIN;
+  if (progress < fadeInFrom) return 0;
+  if (progress < fadeInTo) return (progress - fadeInFrom) / half;
+  if (progress < fadeOutFrom) return 1;
+  if (progress < fadeOutTo) return 1 - (progress - fadeOutFrom) / half;
   return 0;
 }
 
